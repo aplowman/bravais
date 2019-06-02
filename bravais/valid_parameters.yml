@@ -1,0 +1,110 @@
+# triclinic:
+#   not_equal_to:
+#     alpha: 90
+#     beta: 90
+#     gamma: 90
+#   unique_groups:
+#     - [a, b, c]
+#     - [alpha, beta, gamma]
+#   defaults:
+#     a: 1
+#     b: 2
+#     c: 3
+#     alpha: 60
+#     beta: 80
+#     gamma: 50
+
+# monoclinic:
+#   equal_to:
+#     alpha: 90
+#   not_equal_to:
+#     beta: 90
+#   equal_groups:
+#     - [alpha, gamma]
+#   unique_groups:
+#     - [a, b, c]
+#     - [alpha, beta]
+#   defaults:
+#     a: 1
+#     b: 2
+#     c: 3
+#     alpha: 90
+#     beta: 100
+#     gamma: 90
+
+# orthorhombic:
+#   equal_to:
+#     alpha: 90
+#   equal_groups:
+#     - [alpha, beta, gamma]
+#   unique_groups:
+#     - [a, b, c]
+#   defaults:
+#     a: 1
+#     b: 2
+#     c: 3
+#     alpha: 90
+#     beta: 90
+#     gamma: 90  
+
+# tetragonal:
+#   equal_to:
+#     alpha: 90
+#   equal_groups:
+#     - [alpha, beta, gamma]
+#     - [a, b]
+#   unique_groups:
+#     - [a, c]
+#   defaults:
+#     a: 1
+#     b: 1
+#     c: 2
+#     alpha: 90
+#     beta: 90
+#     gamma: 90
+
+# rhombohedral:
+#   equal_to:
+#     alpha: 90
+#     gamma: 120
+#   equal_groups:
+#     - [a, b]
+#     - [alpha, beta]
+#   unique_groups:
+#     - [a, c]
+#   defaults:
+#     a: 1
+#     b: 1
+#     c: 2
+#     alpha: 90
+#     beta: 90
+#     gamma: 120
+
+hexagonal:
+  lengths:
+    equal_groups:
+      - [a, b]    
+    default_min: 3
+    default_max: 6
+  angles:
+    equal_to:
+      alpha: 90
+      gamma: 120
+    equal_groups:
+      - [alpha, beta]
+    default_min: 30
+    default_max: 90
+
+# cubic:
+#   equal_to:
+#     alpha: 90
+#   equal_groups:
+#     - [a, b, c]
+#     - [alpha, beta, gamma]
+#   defaults:
+#     a: 1
+#     b: 1
+#     c: 1
+#     alpha: 90
+#     beta: 90
+#     gamma: 90
