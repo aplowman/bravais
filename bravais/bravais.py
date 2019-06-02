@@ -111,9 +111,6 @@ class BravaisLattice(object):
     TODO:
     -   Add primitive centring type to allowed centring types for rhombohedral
         lattice system.
-    -   Fix bug: if we set hex a to be equal to the default for c, then we get
-        an error: BravaisLattice('hexagonal', a=2)
-            - just need to adapt defaults to find suitable set.
     -   Regarding restrictions/validations on lattice types, need to allow
         restrictions to be "any n parameters must be..." rather than "the first
         two parameters must be". E.g. monoclinic: "two of the angle parameters
