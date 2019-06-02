@@ -6,6 +6,7 @@ Module defining a BravaisLattice class.
 
 from pathlib import Path
 import pkgutil
+from enum import Enum
 
 import numpy as np
 import yaml
@@ -14,7 +15,7 @@ from bravais.validator import NumericValidator
 
 # Lattice sites (as column vectors) in fractional coordinates, for each
 # centring type:
-centring_lattice_sites = {
+CENTRING_LATTICE_SITES = {
     'primitive': np.array([
         [0.0],
         [0.0],
@@ -41,13 +42,16 @@ centring_lattice_sites = {
         [0.0, 1/3, 2/3],
     ]),
 }
-centring_type_code = {
-    'P': 'primitive',
-    'B': 'base',
-    'I': 'body',
-    'F': 'face',
-    'R': 'rhombohedral',
-}
+
+
+class CentringType(Enum):
+    """Class to represent the centring type."""
+
+    primitive = 'P'
+    base = 'B'
+    body = 'I'
+    face = 'F'
+    rhombohedral = 'R'
 
 
 class BravaisLattice(object):
@@ -187,7 +191,10 @@ class BravaisLattice(object):
 
         self.row_or_column = row_or_column
         self.alignment = alignment
-        self._unit_cell = self._get_unit_cell()
+        self._unit_cell = self._compute_unit_cell(alignment)
+        self.lattice_sites_frac = CENTRING_LATTICE_SITES[self.centring_type.name]
+
+        # TODO: add a `degrees` boolean attribute for the angles.
 
     def _normalise_angle_spec(self, alpha, beta, gamma, α, β, γ):
         """Check angles are not specified as both spelled-out and greek
@@ -206,10 +213,81 @@ class BravaisLattice(object):
 
         return alpha, beta, gamma
 
-    def _get_unit_cell(self):
+    def _compute_unit_cell(self, alignment):
         """Use the lattice parameters to form the unit cell with a particular
-        alignment with the Cartesian axes."""
-        return np.array([])
+        alignment with the Cartesian axes.
+
+        Parameters
+        ----------
+        alignment : str
+            Alignment of the unit cell with repsect to the Cartesian axes, must
+            be one either "ax" (align the `a` lattice vector with the x-axis,
+            and the `b` lattice vector in the xy-plane) or "cz" (align the `c`
+            lattice vector with the z-axis and the `b` lattice vector in the
+            yz-plane).
+
+        Returns
+        -------
+        unit_cell : ndarray of shape (3, 3)
+            Array of column vectors representing the unit cell edge vectors.
+
+        TODO: add some references for these equations. Consider doing one
+        original alignment, and then rotating from that? Might want to support
+        arbitrary orientations, which would involve specifying the orientation
+        (as a vector) of one of the lattice vectors, plus a plane (specified
+        as a normal vector?) in which a second lattice vector should lie.
+
+        """
+
+        alignment_opts = ['ax', 'cz']
+        if alignment not in alignment_opts:
+            msg = ('"{}" is not a valid axes alignment option. `align` must be'
+                   ' one of: {}.'.format(alignment, alignment_opts))
+            raise ValueError(msg)
+
+        alpha_r = np.deg2rad(self.alpha)
+        beta_r = np.deg2rad(self.beta)
+        gamma_r = np.deg2rad(self.gamma)
+
+        if alignment == 'ax':
+            # Align `a` lattice vector with the x-axis and `b` lattice vector
+            # in the xy-plane.
+
+            a_x = self.a
+            b_x = self.b * np.cos(gamma_r)
+            b_y = self.b * np.sin(gamma_r)
+            c_x = self.c * np.cos(beta_r)
+            c_y = (abs(self.c) * abs(self.b) *
+                   np.cos(alpha_r) - b_x * c_x) / b_y
+            c_z = np.sqrt(self.c**2 - c_x**2 - c_y**2)
+
+            unit_cell = np.array([
+                [a_x, b_x, c_x],
+                [0,  b_y, c_y],
+                [0,  0, c_z]
+            ])
+
+        elif alignment == 'cz':
+            # Align `c` lattice vector with the z-axis and `b` lattice vector
+            # in the yz-plane.
+
+            f = (1 - (np.cos(alpha_r))**2 - (np.cos(beta_r))**2 - (np.cos(gamma_r))**2
+                 + 2 * np.cos(alpha_r) * np.cos(beta_r) * np.cos(gamma_r))**0.5
+            a_x = self.a * f / np.sin(alpha_r)
+            a_y = self.a * (np.cos(gamma_r) - np.cos(alpha_r)
+                            * np.cos(beta_r)) / np.sin(alpha_r)
+            a_z = self.a * np.cos(beta_r)
+            b_y = self.b * np.sin(alpha_r)
+            b_z = self.b * np.cos(alpha_r)
+            c_z = self.c
+
+            unit_cell = np.array([
+                [a_x, 0, 0],
+                [a_y, b_y, 0],
+                [a_z, b_z, c_z]
+            ])
+
+        return unit_cell
 
     def _validate_lattice_system(self, lattice_system, centring_type):
         """Validate the specified lattice system and centring type."""
@@ -257,6 +335,8 @@ class BravaisLattice(object):
             msg = 'Lattice system {} and centring type {} are not compatible.'
             raise ValueError(msg.format(lattice_system, centring_type))
 
+        centring_type = CentringType(centring_type)
+
         return lattice_system, centring_type
 
     def _validate_params(self, a, b, c, alpha, beta, gamma):
@@ -293,6 +373,11 @@ class BravaisLattice(object):
             return self._unit_cell
         elif self.row_or_column == 'row':
             return self._unit_cell.T
+
+    @property
+    def lattice_sites(self):
+        """Get the position of the lattice sites in Cartesian coordinates."""
+        return np.dot(self._unit_cell, self.lattice_sites_frac)
 
     @property
     def α(self):
