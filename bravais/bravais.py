@@ -393,3 +393,44 @@ class BravaisLattice(object):
     @property
     def γ(self):
         return self.gamma
+
+    def __repr__(self):
+        return (
+            '<{}('
+            'lattice_system="{}", '
+            'centring_type="{}", '
+            'a={:.4f}, '
+            'b={:.4f}, '
+            'c={:.4f}, '
+            'alpha={:.2f}, '
+            'beta={:.2f}, '
+            'gamma={:.2f}'
+            ')>'.format(
+                self.__class__.__name__,
+                self.lattice_system,
+                self.centring_type.value,
+                self.a,
+                self.b,
+                self.c,
+                self.alpha,
+                self.beta,
+                self.gamma,
+            )
+        )
+
+    def __str__(self):
+        return (
+            '{}-centred {} lattice ('
+            'a={:.4f}, b={:.4f}, c={:.4f}, '
+            'alpha={:.2f}, beta={:.2f}, gamma={:.2f}'
+            ')'.format(
+                self.centring_type.value,
+                self.lattice_system,
+                self.a,
+                self.b,
+                self.c,
+                self.alpha,
+                self.beta,
+                self.gamma,
+            )
+        )
