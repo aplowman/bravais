@@ -1,4 +1,4 @@
-[![PyPI version](https://badge.fury.io/py/bravais.svg)](https://badge.fury.io/py/bravais)
+![PyPI](https://img.shields.io/pypi/v/bravais.svg?color=%234c1&label=pypi%20package)
 
 # bravais
 A simple package for representing [Bravais lattices](https://en.wikipedia.org/wiki/Bravais_lattice). Primarily useful to check the passed parameters represent a valid Bravais lattice. If a lattice parameter is not specified, it will be assigned randomly (such that all lattice parameters remain compatible with the specified lattice system).
