@@ -133,6 +133,56 @@ class NumericValidator(object):
             if len(set(eq_to_vals)) < len(eq_to_vals):
                 raise ValueError(msg)
 
+    def _set_default_value(self, all_params, params_to_set):
+        """Assign a default value to a parameter.
+
+        Parameters
+        ----------
+        all_params : dict
+            All parameters. The the value of the parameter specified will be
+            changed within this dict.
+        params_to_set : list of str
+            Names of the parameters to be set to the same value.
+
+        Returns
+        -------
+        None
+
+        """
+
+        assert all([i in all_params for i in params_to_set])
+
+        # Collect values param must not be:
+        bad_vals = []
+        for i in params_to_set:
+            if i in self.not_equal_to:
+                bad_vals.append(self.not_equal_to[i])
+
+            ne_group = self._get_parameter_not_equal_group(i) or []
+            for j in ne_group:
+                if j != i:
+                    ne_val = all_params[j]
+                    if ne_val:
+                        bad_vals.append(ne_val)
+
+        # Find a suitable default value:
+        default_val = None
+        count = 0
+        while default_val is None or default_val in bad_vals:
+
+            default_val = random.random()
+            default_val *= (self.default_max - self.default_min)
+            default_val += self.default_min
+
+            count += 1
+            if count > 10:
+                msg = ('Failed to find suitable default value for '
+                       'parameter {}.')
+                raise RuntimeError(msg.format(params_to_set))
+
+        for i in params_to_set:
+            all_params[i] = default_val
+
     def validate(self, **kwargs):
         """Validate named parameters."""
 
@@ -183,7 +233,9 @@ class NumericValidator(object):
         for eq_group in self.equal_groups:
 
             num_none = sum([params.get(i) is None for i in eq_group])
+
             if len(eq_group) > num_none > 0:
+                # At least one param in the eq_group has a value, use this one.
 
                 val = None
                 for i in eq_group:
@@ -196,40 +248,18 @@ class NumericValidator(object):
                         params[i] = val
                         none_params.remove(i)
 
+            elif len(eq_group) == num_none:
+                # None of the equal group values are set. Use a default.
+                self._set_default_value(params, eq_group)
+                for i in eq_group:
+                    none_params.remove(i)
+
         # Try to set remaining `None`s using defaults. Need a default value
         # that doesn't conflict with `not_equal_to`, nor with
         # `not_equal_groups`.
         if none_params:
-            for i in none_params:
-
-                # Collect values i must not be:
-                bad_vals = []
-                if i in self.not_equal_to:
-                    bad_vals.append(self.not_equal_to[i])
-
-                ne_group = self._get_parameter_not_equal_group(i) or []
-                for j in ne_group:
-                    if j != i:
-                        ne_val = params[j]
-                        if ne_val:
-                            bad_vals.append(ne_val)
-
-                # Find a suitable default value:
-                default = None
-                count = 0
-                while default is None or default in bad_vals:
-
-                    default = random.random()
-                    default *= (self.default_max - self.default_min)
-                    default += self.default_min
-
-                    count += 1
-                    if count > 10:
-                        msg = ('Failed to find suitable default value for '
-                               'parameter {}.')
-                        raise RuntimeError(msg.format(i))
-
-                params[i] = default
+            for i in copy.copy(none_params):
+                self._set_default_value(params, [i])
                 none_params.remove(i)
 
         return params
