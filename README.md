@@ -19,7 +19,7 @@ Quickly generate a monoclinic Bravais lattice without specifying any lattice par
 
 ```python
 mon_lat = BravaisLattice('monoclinic')
-print(mont_lat)
+print(mon_lat)
 ```
 ```
 P-centred monoclinic lattice (a=5.9417, b=4.7245, c=5.7335, alpha=90.00, beta=90.00, gamma=51.01)
@@ -29,6 +29,7 @@ Generate a body-centred tetragonal Bravais lattice with particular lattice param
 
 ```python
 tet_lat = BravaisLattice('tetragonal', 'I', a=3)
+print(tet_lat)
 ```
 
 ```
