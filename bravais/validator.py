@@ -13,7 +13,7 @@ class NumericValidator(object):
     a set of numeric parameters."""
 
     def __init__(self, equal_to=None, not_equal_to=None, equal_groups=None,
-                 not_equal_groups=None, default_min=None, default_max=None):
+                 not_equal_groups=None, default_min=0, default_max=1):
         """
         Initialise a NumericValidator with a set of conditions.
 
