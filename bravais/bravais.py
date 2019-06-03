@@ -196,6 +196,8 @@ class BravaisLattice(object):
         self.lattice_sites_frac = CENTRING_LATTICE_SITES[self.centring_type.name]
 
         # TODO: add a `degrees` boolean attribute for the angles.
+        # TODO: mustn't be able to assign centring_type and lattice_system or
+        # lengths/angles after init
 
     def _normalise_angle_spec(self, alpha, beta, gamma, α, β, γ):
         """Check angles are not specified as both spelled-out and greek
