@@ -101,8 +101,9 @@ class BravaisLattice(object):
 
     Conventional unit cells are generated and expected in the lattice parameter
     parameters. For instance the rhombohedral lattice system is represented
-    with a rhombohedrally-centred hexagonal unit cell, rather than a primitive
-    rhombohedral cell.
+    with a rhombohedrally-centred hexagonal unit cell (the hexagonal axes/
+    "setting"), rather than a primitive rhombohedral (cube stretched along its
+    diagonal) cell.
 
     References
     ----------
