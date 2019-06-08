@@ -105,23 +105,6 @@ class BravaisLattice(object):
     "setting"), rather than a primitive rhombohedral (cube stretched along its
     diagonal) cell.
 
-    References
-    ----------
-    TODO: <Insert reference here to the 14 Bravais lattices in 3D.>
-
-    Examples
-    --------
-    TODO: <Insert example here>
-
-    TODO:
-    -   Add primitive centring type to allowed centring types for rhombohedral
-        lattice system.
-    -   Regarding restrictions/validations on lattice types, need to allow
-        restrictions to be "any n parameters must be..." rather than "the first
-        two parameters must be". E.g. monoclinic: "two of the angle parameters
-        must be 90 deg" rather than "parameters 3 and 5 must be 90 deg".
-    -   Add align option ('ax' or 'cz').
-
     """
 
     def __init__(self, lattice_system=None, centring_type=None, a=None, b=None,
@@ -195,10 +178,6 @@ class BravaisLattice(object):
         self._unit_cell = self._compute_unit_cell(alignment)
         self.lattice_sites_frac = CENTRING_LATTICE_SITES[self.centring_type.name]
 
-        # TODO: add a `degrees` boolean attribute for the angles.
-        # TODO: mustn't be able to assign centring_type and lattice_system or
-        # lengths/angles after init
-
     def _normalise_angle_spec(self, alpha, beta, gamma, α, β, γ):
         """Check angles are not specified as both spelled-out and greek
         symbols."""
@@ -233,12 +212,6 @@ class BravaisLattice(object):
         -------
         unit_cell : ndarray of shape (3, 3)
             Array of column vectors representing the unit cell edge vectors.
-
-        TODO: add some references for these equations. Consider doing one
-        original alignment, and then rotating from that? Might want to support
-        arbitrary orientations, which would involve specifying the orientation
-        (as a vector) of one of the lattice vectors, plus a plane (specified
-        as a normal vector?) in which a second lattice vector should lie.
 
         """
 
