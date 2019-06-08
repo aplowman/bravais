@@ -160,22 +160,24 @@ class BravaisLattice(object):
         """
 
         lat_cent = self._validate_lattice_system(lattice_system, centring_type)
-        self.lattice_system = lat_cent[0]
-        self.centring_type = lat_cent[1]
+
+        self._lattice_system = lat_cent[0]
+        self._centring_type = lat_cent[1]
 
         alpha, beta, gamma = self._normalise_angle_spec(
             alpha, beta, gamma, α, β, γ)
 
         lengths, angles = self._validate_params(a, b, c, alpha, beta, gamma)
-        self.a = lengths['a']
-        self.b = lengths['b']
-        self.c = lengths['c']
-        self.alpha = angles['alpha']
-        self.beta = angles['beta']
-        self.gamma = angles['gamma']
 
         self.row_or_column = row_or_column
         self.alignment = alignment
+
+        self._a = lengths['a']
+        self._b = lengths['b']
+        self._c = lengths['c']
+        self._alpha = angles['alpha']
+        self._beta = angles['beta']
+        self._gamma = angles['gamma']
         self._unit_cell = self._compute_unit_cell(alignment)
         self._lattice_sites_frac = CENTRING_LATTICE_SITES[
             self.centring_type.name]
@@ -346,6 +348,9 @@ class BravaisLattice(object):
         self._row_or_column = row_or_column
 
     @property
+    def lattice_system(self):
+        return self._lattice_system
+
     def unit_cell(self):
         if self.row_or_column == 'column':
             return self._unit_cell
@@ -372,16 +377,40 @@ class BravaisLattice(object):
             return self._lattice_sites.T
 
     @property
+    def a(self):
+        return self._a
+
+    @property
+    def b(self):
+        return self._b
+
+    @property
+    def c(self):
+        return self._c
+
+    @property
+    def alpha(self):
+        return self._alpha
+
+    @property
     def α(self):
-        return self.alpha
+        return self._alpha
+
+    @property
+    def beta(self):
+        return self._beta
 
     @property
     def β(self):
-        return self.beta
+        return self._beta
+
+    @property
+    def gamma(self):
+        return self._gamma
 
     @property
     def γ(self):
-        return self.gamma
+        return self._gamma
 
     def __repr__(self):
         return (
