@@ -108,9 +108,9 @@ class BravaisLattice(object):
     """
 
     def __init__(self, lattice_system=None, centring_type=None, a=None, b=None,
-                 c=None, α=None, β=None, γ=None, alpha=None, beta=None,
-                 gamma=None, degrees=True, alignment='ax',
-                 row_or_column='column'):
+                 c=None, alpha=None, beta=None, gamma=None, degrees=True,
+                 alignment='ax', row_or_column='column', α=None, β=None,
+                 γ=None, centering_type=None):
         """Constructor method for BravaisLattice object.
 
         Parameters
@@ -125,22 +125,14 @@ class BravaisLattice(object):
             types are compatible with all lattice systems. Default is None, in
             which case the rhombohedrally-centred centring type (for the
             rhombohedral lattice system) or primitive centring type (for all
-            other lattice systems) will be chosen.
+            other lattice systems) will be chosen. Specify either
+            `centring_type` or `centering_type`.
         a : float, optional
             Lattice parameter, magnitude of the first unit cell edge vector.
         b : float, optional
             Lattice parameter, magnitude of the second unit cell edge vector.
         c : float, optional
             Lattice parameter, magnitude of the third unit cell edge vector.
-        α : float, optional
-            Lattice parameter, angle in degrees between the second and third
-            unit cell edge vectors. Specify `alpha` or `α`, but not both.
-        β : float, optional
-            Lattice parameter, angle in degrees between the first and third
-            unit cell edge vectors. Specify `beta` or `β`, but not both.
-        γ : float, optional
-            Lattice parameter, angle in degrees between the first and second
-            unit cell edge vectors. Specify `gamma` or `γ`, but not both.
         alpha : float, optional
             Lattice parameter, angle in degrees between the second and third
             unit cell edge vectors. Specify `alpha` or `α`, but not both.
@@ -156,8 +148,23 @@ class BravaisLattice(object):
             row vectors in `unit_cell` and `lattice_sites`, respectively. If
             "column", they are represented as column vectors. Default is
             "column".
+        α : float, optional
+            Lattice parameter, angle in degrees between the second and third
+            unit cell edge vectors. Specify `alpha` or `α`, but not both.
+        β : float, optional
+            Lattice parameter, angle in degrees between the first and third
+            unit cell edge vectors. Specify `beta` or `β`, but not both.
+        γ : float, optional
+            Lattice parameter, angle in degrees between the first and second
+            unit cell edge vectors. Specify `gamma` or `γ`, but not both.
+        centering_type : str, optional
+            American spelling version of `centring_type` parameter. Specify
+            either `centring_type` or `centering_type`.
 
         """
+
+        centring_type = self._normalise_centring_spec(
+            centring_type, centering_type)
 
         lat_cent = self._validate_lattice_system(lattice_system, centring_type)
 
@@ -182,6 +189,17 @@ class BravaisLattice(object):
         self._lattice_sites_frac = CENTRING_LATTICE_SITES[
             self.centring_type.name]
 
+    def _normalise_centring_spec(self, centring_type, centering_type):
+        """Check centring type is not specified in both British and American
+        versions."""
+
+        if centring_type is not None and centering_type is not None:
+            msg = ('Specify either `centring_type` or `centering_type`, but '
+                   'not both!')
+            raise ValueError(msg)
+
+        return centring_type or centering_type
+
     def _normalise_angle_spec(self, alpha, beta, gamma, α, β, γ):
         """Check angles are not specified as both spelled-out and greek
         symbols."""
@@ -190,7 +208,7 @@ class BravaisLattice(object):
             if i is not None and j is not None:
                 msg = ('For each angle, specify either the spelled-out version'
                        ' (e.g. "alpha"), or the Greek letter version (e.g. '
-                       '"α"), but not both!.')
+                       '"α"), but not both!')
                 raise ValueError(msg)
 
         alpha = alpha or α
@@ -351,6 +369,17 @@ class BravaisLattice(object):
     def lattice_system(self):
         return self._lattice_system
 
+    @property
+    def centring_type(self):
+        """British-spelt version of `centering_type`."""
+        return self._centring_type
+
+    @property
+    def centering_type(self):
+        """American-spelt version of `centring_type`."""
+        return self._centring_type
+
+    @property
     def unit_cell(self):
         if self.row_or_column == 'column':
             return self._unit_cell
