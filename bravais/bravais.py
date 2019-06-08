@@ -152,9 +152,10 @@ class BravaisLattice(object):
             unit cell edge vectors. Specify `gamma` or `γ`, but not both.
         row_or_column : str ("row" or "column"), optional
             Defines vector direction in array attributes. For instance, if
-            "row", unit cell edge vectors are represented as row vectors in
-            `unit_cell`. If "column", unit cell edge vectors are represented as
-            column vectors in `unit_cell`. Default is "column".
+            "row", unit cell edge vectors and lattice sites are represented as
+            row vectors in `unit_cell` and `lattice_sites`, respectively. If
+            "column", they are represented as column vectors. Default is
+            "column".
 
         """
 
@@ -176,7 +177,8 @@ class BravaisLattice(object):
         self.row_or_column = row_or_column
         self.alignment = alignment
         self._unit_cell = self._compute_unit_cell(alignment)
-        self.lattice_sites_frac = CENTRING_LATTICE_SITES[self.centring_type.name]
+        self._lattice_sites_frac = CENTRING_LATTICE_SITES[
+            self.centring_type.name]
 
     def _normalise_angle_spec(self, alpha, beta, gamma, α, β, γ):
         """Check angles are not specified as both spelled-out and greek
@@ -351,9 +353,23 @@ class BravaisLattice(object):
             return self._unit_cell.T
 
     @property
+    def lattice_sites_frac(self):
+        if self.row_or_column == 'column':
+            return self._lattice_sites_frac
+        elif self.row_or_column == 'row':
+            return self._lattice_sites_frac.T
+
+    @property
+    def _lattice_sites(self):
+        return np.dot(self._unit_cell, self._lattice_sites_frac)
+
+    @property
     def lattice_sites(self):
         """Get the position of the lattice sites in Cartesian coordinates."""
-        return np.dot(self._unit_cell, self.lattice_sites_frac)
+        if self.row_or_column == 'column':
+            return self._lattice_sites
+        elif self.row_or_column == 'row':
+            return self._lattice_sites.T
 
     @property
     def α(self):
