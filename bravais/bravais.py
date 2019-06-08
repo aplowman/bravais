@@ -346,7 +346,7 @@ class BravaisLattice(object):
         """Validate lattice parameters against the specified lattice system."""
 
         data = pkgutil.get_data('bravais', 'valid_parameters.yml')
-        valid_parameters = yaml.load(data)
+        valid_parameters = yaml.safe_load(data)
 
         valid_lat_params = valid_parameters[self.lattice_system]
         length_validator = NumericValidator(**valid_lat_params['lengths'])
