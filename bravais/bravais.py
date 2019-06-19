@@ -309,7 +309,7 @@ class BravaisLattice(object):
         centring_compat = {
             'P': list(set(all_lat) - set(['rhombohedral'])),
             'B': ['monoclinic', 'orthorhombic'],
-            'I': ['orthorhombic', 'tetragonal'],
+            'I': ['orthorhombic', 'tetragonal', 'cubic'],
             'F': ['orthorhombic', 'cubic'],
             'R': ['rhombohedral'],
         }
