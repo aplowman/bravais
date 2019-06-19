@@ -11,6 +11,7 @@ from enum import Enum
 import numpy as np
 import yaml
 
+from bravais.sites import Sites
 from bravais.validator import NumericValidator
 
 # Lattice sites (as column vectors) in fractional coordinates, for each
@@ -176,9 +177,6 @@ class BravaisLattice(object):
 
         lengths, angles = self._validate_params(a, b, c, alpha, beta, gamma)
 
-        self.row_or_column = row_or_column
-        self.alignment = alignment
-
         self._a = lengths['a']
         self._b = lengths['b']
         self._c = lengths['c']
@@ -186,8 +184,20 @@ class BravaisLattice(object):
         self._beta = angles['beta']
         self._gamma = angles['gamma']
         self._unit_cell = self._compute_unit_cell(alignment)
-        self._lattice_sites_frac = CENTRING_LATTICE_SITES[
-            self.centring_type.name]
+
+        self._lattice_sites = self._get_lattice_sites(row_or_column)
+        self.alignment = alignment
+        self.row_or_column = row_or_column
+
+    def _get_lattice_sites(self, row_or_column):
+
+        lat_sites_frac = CENTRING_LATTICE_SITES[self.centering_type.name]
+        lat_sites_obj = Sites(
+            np.dot(self._unit_cell, lat_sites_frac),
+            vector_direction=row_or_column
+        )
+
+        return lat_sites_obj
 
     def _normalise_centring_spec(self, centring_type, centering_type):
         """Check centring type is not specified in both British and American
@@ -363,6 +373,7 @@ class BravaisLattice(object):
             msg = ('`row_or_column` must be specified as a string, either '
                    '"row" or "column".')
             raise ValueError(msg)
+        self._lattice_sites.vector_direction = row_or_column
         self._row_or_column = row_or_column
 
     @property
@@ -387,23 +398,18 @@ class BravaisLattice(object):
             return self._unit_cell.T
 
     @property
-    def lattice_sites_frac(self):
-        if self.row_or_column == 'column':
-            return self._lattice_sites_frac
-        elif self.row_or_column == 'row':
-            return self._lattice_sites_frac.T
-
-    @property
-    def _lattice_sites(self):
-        return np.dot(self._unit_cell, self._lattice_sites_frac)
-
-    @property
     def lattice_sites(self):
         """Get the position of the lattice sites in Cartesian coordinates."""
-        if self.row_or_column == 'column':
-            return self._lattice_sites
-        elif self.row_or_column == 'row':
-            return self._lattice_sites.T
+
+        return self._lattice_sites.sites
+
+    @property
+    def lattice_sites_frac(self):
+        """Get the position of the lattice sites as fractional coordinates
+        of the unit cell."""
+
+        lat_sites_frac = self._lattice_sites.as_fractional(self.unit_cell)
+        return lat_sites_frac
 
     @property
     def a(self):
