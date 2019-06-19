@@ -81,15 +81,17 @@ class BravaisLattice(object):
         Lattice parameter, angle in degrees between the first and second unit
         cell edge vectors.
     unit_cell : ndarray of shape (3, 3)
-        Array of column or row (depending on `row_or_column`) vectors defining
-        the lattice unit cell.
+        Array of column or row (depending on `vector_direction`) vectors
+        defining the lattice unit cell.
     lat_sites_std: ndarray of shape (3, N)
-        Array of column or row (depending on `row_or_column`) vectors defining
-        the Cartesian positions of lattice sites within the lattice unit cell.
+        Array of column or row (depending on `vector_direction`) vectors
+        defining the Cartesian positions of lattice sites within the lattice
+        unit cell.
     lat_sites_frac: ndarray of shape (3, N)
-        Array of column or row (depending on `row_or_column`) vectors defining
-        the fractional positions of lattice sites within the lattice unit cell.
-    row_or_column : str ("row" or "column")
+        Array of column or row (depending on `vector_direction`) vectors
+        defining the fractional positions of lattice sites within the lattice
+        unit cell.
+    vector_direction : str ("row" or "column")
         Specified whether `unit_cell`, `lat_sites_std` and `lat_sites_frac` are
         arrays of row or column vectors.
 
@@ -110,7 +112,7 @@ class BravaisLattice(object):
 
     def __init__(self, lattice_system=None, centring_type=None, a=None, b=None,
                  c=None, alpha=None, beta=None, gamma=None, degrees=True,
-                 alignment='ax', row_or_column='column', α=None, β=None,
+                 alignment='ax', vector_direction='column', α=None, β=None,
                  γ=None, centering_type=None):
         """Constructor method for BravaisLattice object.
 
@@ -143,7 +145,7 @@ class BravaisLattice(object):
         gamma : float, optional
             Lattice parameter, angle in degrees between the first and second
             unit cell edge vectors. Specify `gamma` or `γ`, but not both.
-        row_or_column : str ("row" or "column"), optional
+        vector_direction : str ("row" or "column"), optional
             Defines vector direction in array attributes. For instance, if
             "row", unit cell edge vectors and lattice sites are represented as
             row vectors in `unit_cell` and `lattice_sites`, respectively. If
@@ -185,16 +187,16 @@ class BravaisLattice(object):
         self._gamma = angles['gamma']
         self._unit_cell = self._compute_unit_cell(alignment)
 
-        self._lattice_sites = self._get_lattice_sites(row_or_column)
+        self._lattice_sites = self._get_lattice_sites(vector_direction)
         self.alignment = alignment
-        self.row_or_column = row_or_column
+        self.vector_direction = vector_direction
 
-    def _get_lattice_sites(self, row_or_column):
+    def _get_lattice_sites(self, vector_direction):
 
         lat_sites_frac = CENTRING_LATTICE_SITES[self.centering_type.name]
         lat_sites_obj = Sites(
             np.dot(self._unit_cell, lat_sites_frac),
-            vector_direction=row_or_column
+            vector_direction=vector_direction
         )
 
         return lat_sites_obj
@@ -364,17 +366,17 @@ class BravaisLattice(object):
         return lengths_valid, angles_valid
 
     @property
-    def row_or_column(self):
-        return self._row_or_column
+    def vector_direction(self):
+        return self._vector_direction
 
-    @row_or_column.setter
-    def row_or_column(self, row_or_column):
-        if row_or_column not in ['row', 'column']:
-            msg = ('`row_or_column` must be specified as a string, either '
+    @vector_direction.setter
+    def vector_direction(self, vector_direction):
+        if vector_direction not in ['row', 'column']:
+            msg = ('`vector_direction` must be specified as a string, either '
                    '"row" or "column".')
             raise ValueError(msg)
-        self._lattice_sites.vector_direction = row_or_column
-        self._row_or_column = row_or_column
+        self._lattice_sites.vector_direction = vector_direction
+        self._vector_direction = vector_direction
 
     @property
     def lattice_system(self):
@@ -392,9 +394,9 @@ class BravaisLattice(object):
 
     @property
     def unit_cell(self):
-        if self.row_or_column == 'column':
+        if self.vector_direction == 'column':
             return self._unit_cell
-        elif self.row_or_column == 'row':
+        elif self.vector_direction == 'row':
             return self._unit_cell.T
 
     @property
