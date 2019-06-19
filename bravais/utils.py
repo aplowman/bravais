@@ -10,6 +10,8 @@ def check_indices(seq, seq_idx):
     Given a sequence (e.g. list, tuple, ndarray) which is indexed by another,
     check the indices are sensible.
 
+    TODO: check integers as well?
+
     Parameters
     ----------
     seq : sequence
@@ -23,4 +25,4 @@ def check_indices(seq, seq_idx):
 
     # Check maximum index is equal to length of sequence - 1
     if max(seq_idx) > len(seq) - 1:
-        raise IndexError('Found index larger than seqence length.')
+        raise IndexError('Found index larger than sequence length.')
