@@ -11,7 +11,7 @@ from enum import Enum
 import numpy as np
 import yaml
 
-from bravais.sites import Sites
+from bravais.sites import Sites, vector_direction_setter
 from bravais.validator import NumericValidator
 
 # Lattice sites (as column vectors) in fractional coordinates, for each
@@ -371,12 +371,8 @@ class BravaisLattice(object):
 
     @vector_direction.setter
     def vector_direction(self, vector_direction):
-        if vector_direction not in ['row', 'column']:
-            msg = ('`vector_direction` must be specified as a string, either '
-                   '"row" or "column".')
-            raise ValueError(msg)
         self._lattice_sites.vector_direction = vector_direction
-        self._vector_direction = vector_direction
+        vector_direction_setter(self, vector_direction)
 
     @property
     def lattice_system(self):

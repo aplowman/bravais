@@ -12,6 +12,24 @@ import numpy as np
 from bravais.utils import check_indices
 
 
+def vector_direction_setter(obj, vector_direction):
+
+    if vector_direction not in ['row', 'column', 'col']:
+        msg = ('`vector_direction` must be specified as a string, either '
+               '"row" or "column" (or "col").')
+        raise ValueError(msg)
+
+    if vector_direction == 'col':
+        vector_direction = 'column'
+
+    if getattr(obj, '_vector_direction', None):
+        if vector_direction == getattr(obj, '_vector_direction'):
+            msg = '`vector_direction` is already set to "{}"'
+            warnings.warn(msg.format(vector_direction))
+
+    obj._vector_direction = vector_direction
+
+
 class SitesLabel(object):
     """Class to represent the labelling of a set of points in space.
 
@@ -155,21 +173,7 @@ class Sites(object):
 
     @vector_direction.setter
     def vector_direction(self, vector_direction):
-
-        if vector_direction not in ['row', 'column', 'col']:
-            msg = ('`vector_direction` must be specified as a string, either '
-                   '"row" or "column" (or "col").')
-            raise ValueError(msg)
-
-        if vector_direction == 'col':
-            vector_direction = 'column'
-
-        if getattr(self, '_vector_direction', None):
-            if vector_direction == getattr(self, '_vector_direction'):
-                msg = '`vector_direction` is already set to "{}"'
-                warnings.warn(msg.format(vector_direction))
-
-        self._vector_direction = vector_direction
+        vector_direction_setter(self, vector_direction)
 
     def _validate(self, sites, vector_direction, dimension):
         """Validate inputs."""
