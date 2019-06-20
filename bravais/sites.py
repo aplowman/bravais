@@ -121,7 +121,7 @@ class Sites(object):
     def _init_labels(self, labels):
         """Set labels as attributes for easy access."""
 
-        lable_objs = {}
+        label_objs = {}
         for k, v in (labels or {}).items():
 
             msg = ('Specify site labels as either a single list/tuple of '
@@ -155,9 +155,9 @@ class Sites(object):
                 raise ValueError(msg.format(k, len(vals), len(self)))
 
             setattr(self, k, vals)
-            lable_objs.update({k: sites_label})
+            label_objs.update({k: sites_label})
 
-        return lable_objs
+        return label_objs
 
     def __len__(self):
         """Get how many sites there are in this Sites objects."""
