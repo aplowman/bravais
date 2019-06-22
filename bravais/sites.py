@@ -22,8 +22,9 @@ def vector_direction_setter(obj, vector_direction):
     if vector_direction == 'col':
         vector_direction = 'column'
 
-    if getattr(obj, '_vector_direction', None):
-        if vector_direction == getattr(obj, '_vector_direction'):
+    old_vec_dir = getattr(obj, '_vector_direction', None)
+    if old_vec_dir:
+        if vector_direction == old_vec_dir:
             msg = '`vector_direction` is already set to "{}"'
             warnings.warn(msg.format(vector_direction))
 
