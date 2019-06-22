@@ -117,7 +117,21 @@ class Sites(object):
         self.vector_direction = vector_direction
         self._sites = self._validate(sites, self.vector_direction, dimension)
         self._dimension = dimension
-        self.labels = self._init_labels(labels)
+        self._labels = self._init_labels(labels)
+
+    def __setattr__(self, name, value):
+        """Overridden method to prevent reassigning label attributes."""
+
+        if getattr(self, '_labels', None) and name in self._labels:
+            msg = 'Can\'t set attribute "{}"'.format(name)
+            raise AttributeError(msg)
+
+        # Set all other attributes as normal:
+        super().__setattr__(name, value)
+
+    def __len__(self):
+        """Get how many sites there are in this Sites objects."""
+        return self._sites.shape[1]
 
     def _init_labels(self, labels):
         """Set labels as attributes for easy access."""
@@ -160,22 +174,6 @@ class Sites(object):
 
         return label_objs
 
-    def __len__(self):
-        """Get how many sites there are in this Sites objects."""
-        return self._sites.shape[1]
-
-    @property
-    def dimension(self):
-        return self._dimension
-
-    @property
-    def vector_direction(self):
-        return self._vector_direction
-
-    @vector_direction.setter
-    def vector_direction(self, vector_direction):
-        vector_direction_setter(self, vector_direction)
-
     def _validate(self, sites, vector_direction, dimension):
         """Validate inputs."""
 
@@ -213,13 +211,6 @@ class Sites(object):
         else:
             return sites
 
-    @property
-    def sites(self):
-        if self.vector_direction == 'column':
-            return self._sites
-        else:
-            return self._sites.T
-
     def _validate_label_filter(self, **kwargs):
         """Validation for the `index` method."""
 
@@ -244,6 +235,29 @@ class Sites(object):
                 raise ValueError(msg.format(match_label))
 
             return match_label, match_val
+
+    @property
+    def labels(self):
+        return self._labels
+
+    @property
+    def dimension(self):
+        return self._dimension
+
+    @property
+    def sites(self):
+        if self.vector_direction == 'column':
+            return self._sites
+        else:
+            return self._sites.T
+
+    @property
+    def vector_direction(self):
+        return self._vector_direction
+
+    @vector_direction.setter
+    def vector_direction(self, vector_direction):
+        vector_direction_setter(self, vector_direction)
 
     def index(self, **kwargs):
         """Filter site indices by a label with a particular value."""
