@@ -11,7 +11,7 @@ from enum import Enum
 import numpy as np
 import yaml
 
-from bravais.sites import Sites, vector_direction_setter
+from spatial_sites import Sites, vector_direction_setter
 from bravais.validator import NumericValidator
 
 # Lattice sites (as column vectors) in fractional coordinates, for each
@@ -399,7 +399,7 @@ class BravaisLattice(object):
     def lattice_sites(self):
         """Get the position of the lattice sites in Cartesian coordinates."""
 
-        return self._lattice_sites.sites
+        return self._lattice_sites.coords
 
     @property
     def lattice_sites_frac(self):
