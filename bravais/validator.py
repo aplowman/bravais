@@ -267,10 +267,10 @@ class NumericValidator(object):
     def __repr__(self):
         return (
             '<{}('
-            'equal_to={}, '
-            'not_equal_to={}, '
-            'equal_groups={}, '
-            'not_equal_groups={}'
+            'equal_to={!r}, '
+            'not_equal_to={!r}, '
+            'equal_groups={!r}, '
+            'not_equal_groups={!r}'
             ')>'.format(
                 self.__class__.__name__,
                 self.equal_to,

@@ -448,8 +448,8 @@ class BravaisLattice(object):
     def __repr__(self):
         return (
             '<{}('
-            'lattice_system="{}", '
-            'centring_type="{}", '
+            'lattice_system={!r}, '
+            'centring_type={!r}, '
             'a={:.4f}, '
             'b={:.4f}, '
             'c={:.4f}, '
