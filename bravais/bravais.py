@@ -44,6 +44,8 @@ CENTRING_LATTICE_SITES = {
     ]),
 }
 
+REPR_INDENT = 4
+
 
 class CentringType(Enum):
     """Class to represent the centring type."""
@@ -450,18 +452,21 @@ class BravaisLattice(object):
         return self._gamma
 
     def __repr__(self):
-        return (
-            '<{}('
-            'lattice_system={!r}, '
-            'centring_type={!r}, '
-            'a={:.4f}, '
-            'b={:.4f}, '
-            'c={:.4f}, '
-            'alpha={:.2f}, '
-            'beta={:.2f}, '
-            'gamma={:.2f}'
-            ')>'.format(
+
+        arg_fmt = ' ' * REPR_INDENT
+        out = (
+            '{0}(\n'
+            '{1}lattice_system={2!r},\n'
+            '{1}centring_type={3!r},\n'
+            '{1}a={4:.4f}, '
+            'b={5:.4f}, '
+            'c={6:.4f},\n'
+            '{1}alpha={7:.2f}, '
+            'beta={8:.2f}, '
+            'gamma={9:.2f}\n'
+            ')'.format(
                 self.__class__.__name__,
+                arg_fmt,
                 self.lattice_system,
                 self.centring_type.value,
                 self.a,
@@ -472,6 +477,7 @@ class BravaisLattice(object):
                 self.gamma,
             )
         )
+        return out
 
     def __str__(self):
         return (
