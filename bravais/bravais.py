@@ -187,16 +187,17 @@ class BravaisLattice(object):
         self._gamma = angles['gamma']
         self._unit_cell = self._compute_unit_cell(alignment)
 
+        self.vector_direction = vector_direction
         self._lattice_sites = self._get_lattice_sites(vector_direction)
         self.alignment = alignment
-        self.vector_direction = vector_direction
 
     def _get_lattice_sites(self, vector_direction):
 
         lat_sites_frac = CENTRING_LATTICE_SITES[self.centering_type.name]
         lat_sites_obj = Sites(
-            np.dot(self._unit_cell, lat_sites_frac),
-            vector_direction=vector_direction
+            coords=lat_sites_frac,
+            vector_direction=vector_direction,
+            basis=self.unit_cell,
         )
 
         return lat_sites_obj
