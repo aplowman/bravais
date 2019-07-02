@@ -371,8 +371,11 @@ class BravaisLattice(object):
 
     @vector_direction.setter
     def vector_direction(self, vector_direction):
-        self._lattice_sites.vector_direction = vector_direction
-        vector_direction_setter(self, vector_direction)
+        vector_direction_setter(self, vector_direction, warn=False)
+        try:
+            self._lattice_sites.vector_direction = vector_direction
+        except AttributeError:
+            pass
 
     @property
     def lattice_system(self):
