@@ -190,19 +190,20 @@ class BravaisLattice(object):
         self._unit_cell = self._compute_unit_cell(alignment)
 
         self.vector_direction = vector_direction
-        self._lattice_sites = self._get_lattice_sites(vector_direction)
+        self._sites = self._init_sites(vector_direction)
         self.alignment = alignment
 
-    def _get_lattice_sites(self, vector_direction):
+    def _init_sites(self, vector_direction):
 
-        lat_sites_frac = CENTRING_LATTICE_SITES[self.centering_type.name]
-        lat_sites_obj = Sites(
-            coords=lat_sites_frac,
-            vector_direction=vector_direction,
-            basis=self.unit_cell,
-        )
+        sites_dict = {
+            'lattice_sites': Sites(
+                coords=CENTRING_LATTICE_SITES[self.centering_type.name],
+                vector_direction=vector_direction,
+                basis=self.unit_cell,
+            )
+        }
 
-        return lat_sites_obj
+        return sites_dict
 
     def _normalise_centring_spec(self, centring_type, centering_type):
         """Check centring type is not specified in both British and American
@@ -402,18 +403,13 @@ class BravaisLattice(object):
             return self._unit_cell.T
 
     @property
-    def lattice_sites(self):
-        """Get the position of the lattice sites in Cartesian coordinates."""
-
-        return self._lattice_sites.coords
+    def sites(self):
+        return self._sites
 
     @property
-    def lattice_sites_frac(self):
-        """Get the position of the lattice sites as fractional coordinates
-        of the unit cell."""
-
-        lat_sites_frac = self._lattice_sites.as_fractional(self.unit_cell)
-        return lat_sites_frac
+    def lattice_sites(self):
+        """Get the position of the lattice sites Sites object."""
+        return self.sites['lattice_sites']
 
     @property
     def a(self):
