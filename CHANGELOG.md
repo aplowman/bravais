@@ -1,5 +1,19 @@
 # Change Log
 
+## [0.1.3] - 2019.09.01
+
+### Added
+
+- `Sites` class used from `spatial-sites` package for internally storing lattice sites.
+
+### Changed
+
+- To be consistent with the new `Sites` class, the `BravaisLattice` attribute `row_or_column` has changed to `vector_direction`, and it now accepts "col" in addition to "column".
+
+### Fixed
+
+- Cubic lattices can now have the body-centred (I) centring type.
+
 ## [0.1.2] - 2019.06.08
 
 ### Changed
