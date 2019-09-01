@@ -113,9 +113,8 @@ class BravaisLattice(object):
     """
 
     def __init__(self, lattice_system=None, centring_type=None, a=None, b=None,
-                 c=None, alpha=None, beta=None, gamma=None, degrees=True,
-                 alignment='ax', vector_direction='column', α=None, β=None,
-                 γ=None, centering_type=None):
+                 c=None, alpha=None, beta=None, gamma=None, alignment='ax',
+                 vector_direction='column', α=None, β=None, γ=None, centering_type=None):
         """Constructor method for BravaisLattice object.
 
         Parameters
@@ -192,6 +191,21 @@ class BravaisLattice(object):
         self.vector_direction = vector_direction
         self._sites = self._init_sites(vector_direction)
         self.alignment = alignment
+
+    def copy(self):
+        out = BravaisLattice(
+            lattice_system=self.lattice_system,
+            centring_type=self.centring_type,
+            a=self.a,
+            b=self.b,
+            c=self.c,
+            alpha=self.alpha,
+            beta=self.beta,
+            gamma=self.gamma,
+            vector_direction=self.vector_direction,
+            alignment=self.alignment,
+        )
+        return out
 
     def _init_sites(self, vector_direction):
 
