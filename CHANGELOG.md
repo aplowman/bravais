@@ -1,5 +1,11 @@
 # Change Log
 
+## [0.1.4] - 2019.12.10
+
+### Changed
+
+- Removed `degrees` argument to `BravaisLattice` constructor, since it doesn't do anything.
+
 ## [0.1.3] - 2019.09.01
 
 ### Added
