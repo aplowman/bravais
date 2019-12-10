@@ -192,21 +192,6 @@ class BravaisLattice(object):
         self._sites = self._init_sites(vector_direction)
         self.alignment = alignment
 
-    def copy(self):
-        out = BravaisLattice(
-            lattice_system=self.lattice_system,
-            centring_type=self.centring_type,
-            a=self.a,
-            b=self.b,
-            c=self.c,
-            alpha=self.alpha,
-            beta=self.beta,
-            gamma=self.gamma,
-            vector_direction=self.vector_direction,
-            alignment=self.alignment,
-        )
-        return out
-
     def _init_sites(self, vector_direction):
 
         sites_dict = {
